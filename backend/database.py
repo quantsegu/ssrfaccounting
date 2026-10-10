@@ -6,9 +6,12 @@ import os
 # Database URL from environment variable, default to SQLite for local development
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ssrf_accounting.db")
 
-# Handle Railway PostgreSQL URL format
+# Handle Railway PostgreSQL URL format. Name the psycopg2 driver explicitly: SQLAlchemy 2.1+
+# defaults plain "postgresql://" to psycopg (v3), which is not installed.
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 # For SQLite, use check_same_thread=False
 # For PostgreSQL, don't use check_same_thread
